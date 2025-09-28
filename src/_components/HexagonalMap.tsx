@@ -15,7 +15,7 @@ const HexagonalMap = () => {
 
   return (
     <div
-      className="grid gap-6 p-10 h-full w-full grid-cols-1 grid-rows-auto md:grid-cols-3 md:grid-rows-3">
+      className="grid gap-6 p-10 h-full w-full grid-cols-1 grid-rows-auto md:grid-cols-3 md:grid-rows-3 relative">
       <div className="left md:col-span-2 md:row-span-3 border bg-card rounded-xl h-64 md:h-auto">
         1
       </div>
@@ -39,7 +39,7 @@ const HexagonalMap = () => {
           </div>
         </div>
 
-        {showSlider ? (
+        {showSlider && (
           <div className="slider w-full mt-10 flex flex-col text-center items-center">
             <Slider
               defaultValue={[1]}
@@ -48,16 +48,13 @@ const HexagonalMap = () => {
               onValueChange={(value) => setSliderValue(value[0])}
             />
             <div className="text mt-3">Run for {sliderValue} hours</div>
-            <Button className="mt-4 w-1/2 cursor-pointer">Run</Button>
           </div>
-        ) : (
-          <div className="bg-stone-700 rounded-xl mt-10 w-full h-24 flex items-center justify-center">
-            Hello
-          </div>
-        )}
+          )
+        }
 
-        <div className="pod mt-10 md:absolute md:bottom-8">
+        <div className="pod md:absolute md:bottom-3 flex items-center justify-between">
           <AddCoordinates />
+          {showSlider && <Button className="w-2/6 cursor-pointer">Run</Button>}
         </div>
       </div>
     </div>

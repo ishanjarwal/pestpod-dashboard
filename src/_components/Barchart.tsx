@@ -52,15 +52,15 @@ export const chartConfig = {
 
 export function Barchart() {
   return (
-    <Card className="h-full w-full flex flex-col">
+    <Card className="h-full w-full flex flex-col justify-between">
       <CardHeader>
         <CardTitle>Bar Chart - Multiple</CardTitle>
         <CardDescription>24-hour Humidity, Temperature & Moisture</CardDescription>
       </CardHeader>
 
       <CardContent className="flex-1 p-0">
-        <ChartContainer config={chartConfig} className="h-60 w-full">
-          <ResponsiveContainer width="100%" height="100%">
+        <ChartContainer config={chartConfig} className="h-40 w-full">
+          <ResponsiveContainer width="100%" height="100%" className={""}>
             <BarChart data={chartData} margin={{ left: 32, right: 32, top: 0, bottom: 0 }}>
               <CartesianGrid vertical={false} />
               <XAxis

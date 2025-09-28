@@ -51,7 +51,7 @@ export const chartConfig = {
 
 export function Linechart() {
   return (
-    <Card className="h-full w-full flex flex-col">
+    <Card className="h-full w-full flex flex-col justify-between">
       <CardHeader>
         <CardTitle>Hourly Environmental Data</CardTitle>
         <CardDescription>
@@ -59,8 +59,8 @@ export function Linechart() {
         </CardDescription>
       </CardHeader>
 
-      <CardContent className="flex-1 p-0">
-        <ChartContainer config={chartConfig} className="h-60 w-full">
+      <CardContent className="flex-1 p-0 ">
+        <ChartContainer config={chartConfig} className="h-40 w-full">
           <ResponsiveContainer width="100%" height="100%">
             <AreaChart data={chartData} margin={{ left: 32, right: 32, top: 0, bottom: 0 }}>
               <CartesianGrid vertical={false} />

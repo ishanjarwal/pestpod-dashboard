@@ -1,31 +1,23 @@
 "use client"
 
+import type { RowData } from "@tanstack/react-table"
+
+declare module "@tanstack/react-table" {
+  interface TableMeta<TData extends RowData> {
+    setRowSelection: React.Dispatch<React.SetStateAction<{ [key: string]: boolean }>>
+  }
+}
+
+
 import * as React from "react"
 import {
   type ColumnDef,
-  type ColumnFiltersState,
   flexRender,
   getCoreRowModel,
-  getFilteredRowModel,
   getPaginationRowModel,
-  getSortedRowModel,
-  type SortingState,
   useReactTable,
-  type VisibilityState,
 } from "@tanstack/react-table"
-import { ArrowUpDown, ChevronDown, MoreHorizontal } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { Checkbox } from "@/components/ui/checkbox"
-import {
-  DropdownMenu,
-  DropdownMenuCheckboxItem,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { Input } from "@/components/ui/input"
 import {
   Table,
   TableBody,
@@ -36,7 +28,18 @@ import {
 } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
 import { format, parseISO } from "date-fns"
+import { MoreHorizontal } from "lucide-react"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import { Checkbox } from "@/components/ui/checkbox"
 
+// Type
 type EnvironmentalData = {
   id: string
   picture: string
@@ -48,9 +51,9 @@ type EnvironmentalData = {
   pesticideSprayTime: string
 }
 
-// Example static data (replace with API fetch later)
+// Example static data
 const data: EnvironmentalData[] = [
-  {
+ {
     id: "abc123",
     picture: "https://picsum.photos/100?random=1",
     timestamp: "2025-09-26T10:00:00Z",
@@ -62,7 +65,7 @@ const data: EnvironmentalData[] = [
   },
   {
     id: "def456",
-    picture: "https://picsum.photos/100?random=2",
+    picture: "https://imgs.search.brave.com/NzPOS2WJ60hcOPNfpOp4IN8upnPeknqKVb2sIzocjvM/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly90NC5m/dGNkbi5uZXQvanBn/LzEwLzI1LzE4LzA1/LzM2MF9GXzEwMjUx/ODA1NzhfQmpVNVc1/YkpoWkd5a0VBMkFV/VmpxemZ6VGRyWlE0/S3MuanBn",
     timestamp: "2025-09-26T11:00:00Z",
     status: "processing",
     humidity: 82,
@@ -110,20 +113,23 @@ const data: EnvironmentalData[] = [
     moisture: 72,
     pesticideSprayTime: "30 minutes",
   },
-
 ]
 
-// Columns definition
+// Columns
 export const columns: ColumnDef<EnvironmentalData>[] = [
   {
     id: "select",
-    header: () => null,
+    header: "Select",
     cell: ({ row, table }) => (
       <Checkbox
         checked={row.getIsSelected()}
         onCheckedChange={(value) => {
-          table.resetRowSelection()
-          row.toggleSelected(!!value)
+          if (value) {
+            // allow only this row to be selected
+            table.options.meta?.setRowSelection({ [row.id]: true })
+          } else {
+            table.options.meta?.setRowSelection({})
+          }
         }}
         aria-label="Select row"
       />
@@ -150,32 +156,25 @@ export const columns: ColumnDef<EnvironmentalData>[] = [
   },
   { accessorKey: "id", header: "ID" },
   {
-    accessorKey: "picture",
-    header: "Picture",
-    cell: ({ row }) => {
-      const url = row.getValue("picture") as string
-      return (
+  accessorKey: "picture",
+  header: "Picture",
+  cell: ({ row }) => {
+    const url = row.getValue("picture") as string
+    return (
+      <div className="w-12 h-12 flex items-center justify-center overflow-hidden rounded-md bg-gray-100">
         <img
           src={url}
           alt="thumbnail"
-          width={60}
-          height={60}
-          className="rounded-md"
+          className="w-full h-full object-cover"
         />
-      )
-    },
+      </div>
+    )
   },
+},
+
   {
     accessorKey: "timestamp",
-    header: ({ column }) => (
-      <Button
-        variant="ghost"
-        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-      >
-        Timestamp
-        <ArrowUpDown className="ml-2 h-4 w-4" />
-      </Button>
-    ),
+    header: "Timestamp",
     cell: ({ row }) => {
       const rawTimestamp = row.getValue("timestamp") as string
       const date = parseISO(rawTimestamp)
@@ -189,7 +188,6 @@ export const columns: ColumnDef<EnvironmentalData>[] = [
   { accessorKey: "pesticideSprayTime", header: "Spray Time" },
   {
     id: "actions",
-    enableHiding: false,
     cell: ({ row }) => {
       const record = row.original
       return (
@@ -217,132 +215,36 @@ export const columns: ColumnDef<EnvironmentalData>[] = [
 ]
 
 export default function EnvironmentalDataTable() {
-  const [sorting, setSorting] = React.useState<SortingState>([])
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
-  const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
   const [rowSelection, setRowSelection] = React.useState({})
   const [pagination, setPagination] = React.useState({
     pageIndex: 0,
-    pageSize: 4,
+    pageSize: 3,
   })
+
   const table = useReactTable({
     data,
     columns,
-    onSortingChange: setSorting,
-    onColumnFiltersChange: setColumnFilters,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
-    getSortedRowModel: getSortedRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
-    onColumnVisibilityChange: setColumnVisibility,
-    onRowSelectionChange: setRowSelection,
     onPaginationChange: setPagination,
-    state: { sorting, columnFilters, columnVisibility, rowSelection, pagination },
+    state: { pagination, rowSelection },
+    onRowSelectionChange: setRowSelection,
+    meta: {
+      setRowSelection,
+    },
   })
 
-  async function fetchData(){
-    try{
-      const respone= await fetch('http/localhost:8080/',{
-        method: "GET",
-      })
-
-      if(!respone.ok){
-        const data= await respone.json();
-        console.error(data.error);
-        return;
-      }
-
-      const Data=await respone.json();
-
-      // use the context setter function over here ishan - setData(Data);
-
-    }
-    catch(error: any){
-      console.error("Error fetching the data :",error.message);
-    }
-  }
-
   return (
-    <div className="w-full">
-      {/* Filter Bar */}
-      <div className="flex items-center py-4">
-        <Input
-          placeholder="Filter ID..."
-          value={(table.getColumn("id")?.getFilterValue() as string) ?? ""}
-          onChange={(event) =>
-            table.getColumn("id")?.setFilterValue(event.target.value)
-          }
-          className="max-w-sm"
-        />
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="ml-auto">
-              Columns <ChevronDown />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            {table
-              .getAllColumns()
-              .filter((column) => column.getCanHide())
-              .map((column) => (
-                <DropdownMenuCheckboxItem
-                  key={column.id}
-                  className="capitalize"
-                  checked={column.getIsVisible()}
-                  onCheckedChange={(value) => column.toggleVisibility(!!value)}
-                >
-                  {column.id}
-                </DropdownMenuCheckboxItem>
-              ))}
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </div>
-
-      {/* Table */}
-      <div className="overflow-hidden rounded-md border px-5 py-3 bg-card mt-2">
-        <Table>
-          <TableHeader>
-            {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => (
-                  <TableHead key={header.id}>
-                    {header.isPlaceholder
-                      ? null
-                      : flexRender(header.column.columnDef.header, header.getContext())}
-                  </TableHead>
-                ))}
-              </TableRow>
-            ))}
-          </TableHeader>
-          <TableBody>
-            {table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map((row) => (
-                <TableRow key={row.id} data-state={row.getIsSelected() && "selected"}>
-                  {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
-                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                    </TableCell>
-                  ))}
-                </TableRow>
-              ))
-            ) : (
-              <TableRow>
-                <TableCell colSpan={columns.length} className="h-24 text-center">
-                  No results.
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
-      </div>
-
-      {/* Pagination + Selection Info */}
-      <div className="flex items-center justify-end space-x-2 py-4">
-        <div className="text-muted-foreground flex-1 text-sm">
-          {table.getFilteredSelectedRowModel().rows.length} of{" "}
-          {table.getFilteredRowModel().rows.length} row(s) selected.
+    <div className="h-full w-full flex flex-col p-5">
+      {/* Pagination & Selected Row Info → Moved UP */}
+      <div className="flex items-center justify-between space-x-2 py-2 px-4 border-b mb-2">
+        <div className="text-sm text-muted-foreground">
+          Selected Row:{" "}
+          {table.getSelectedRowModel().rows.length > 0
+            ? table.getSelectedRowModel().rows[0].original.id
+            : "None"}
         </div>
-        <div className="space-x-2">
+        <div className="flex space-x-2">
           <Button
             variant="outline"
             size="sm"
@@ -361,6 +263,53 @@ export default function EnvironmentalDataTable() {
           </Button>
         </div>
       </div>
+
+      {/* Table Wrapper */}
+      <div className="flex-1 overflow-auto rounded-md border bg-card">
+        <Table className="w-full">
+          <TableHeader>
+            {table.getHeaderGroups().map((headerGroup) => (
+              <TableRow key={headerGroup.id}>
+                {headerGroup.headers.map((header) => (
+                  <TableHead key={header.id}>
+                    {flexRender(
+                      header.column.columnDef.header,
+                      header.getContext()
+                    )}
+                  </TableHead>
+                ))}
+              </TableRow>
+            ))}
+          </TableHeader>
+          <TableBody>
+            {table.getRowModel().rows?.length ? (
+              table.getRowModel().rows.map((row) => (
+                <TableRow
+                  key={row.id}
+                  data-state={row.getIsSelected() && "selected"}
+                  className={row.getIsSelected() ? "bg-blue-100" : ""}
+                >
+                  {row.getVisibleCells().map((cell) => (
+                    <TableCell key={cell.id}>
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext()
+                      )}
+                    </TableCell>
+                  ))}
+                </TableRow>
+              ))
+            ) : (
+              <TableRow>
+                <TableCell colSpan={columns.length} className="h-24 text-center">
+                  No results.
+                </TableCell>
+              </TableRow>
+            )}
+          </TableBody>
+        </Table>
+      </div>
     </div>
   )
 }
+

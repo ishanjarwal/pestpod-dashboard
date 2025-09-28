@@ -38,19 +38,17 @@ export function Piechart() {
       <CardContent className="flex-1 p-0">
         <ChartContainer
           config={chartConfig}
-          className="h-60 w-full flex justify-center"
+          className="h-full w-full flex justify-center items-center"
         >
           <ResponsiveContainer width="100%" height="100%">
             <PieChart>
-              <ChartTooltip
-                content={<ChartTooltipContent nameKey="value" />}
-              />
+              <ChartTooltip content={<ChartTooltipContent nameKey="value" />} />
               <Pie
                 data={chartData}
                 dataKey="value"
                 nameKey="key"
-                innerRadius={40}
-                outerRadius={80}
+                innerRadius="40%"
+                outerRadius="80%"
                 paddingAngle={5}
               >
                 <LabelList

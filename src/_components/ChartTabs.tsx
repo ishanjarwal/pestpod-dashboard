@@ -30,7 +30,7 @@ export function ChartTabs() {
     },[])
 
   return (
-    <div className="w-full h-full p-4 rounded-lg">
+    <div className="w-full h-full p-4 rounded-lg relative">
       <Tabs defaultValue="line" className="w-full h-full flex flex-col">
       
         <div className="flex items-center justify-end ">

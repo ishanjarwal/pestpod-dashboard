@@ -1,25 +1,17 @@
-import { ChartTabs } from "@/_components/ChartTabs"
+import { ChartTabs } from "@/_components/ChartTabs";
 import Deatils from "@/_components/Deatils";
 import HexagonalMap from "@/_components/HexagonalMap";
-import Table from '@/_components/Table';
+import Table from "@/_components/Table";
 
 const Dashboard = () => {
   return (
-    <div className="relative min-h-screen bg-black flex flex-wrap w-full">  
-      <div className="one bg-background w-1/2 h-[70vh] relative">
-           <HexagonalMap></HexagonalMap>
-      </div>
-      <div className="two  w-1/2 h-[70vh] relative pb-5">
-      <ChartTabs></ChartTabs>
-      </div>
-      <div className="three  w-1/2 h-[70vh] relative p-5">
-        <Table></Table>
-      </div>
-      <div className="four bg-background w-1/2 h-[70vh] relative p-3">
-         <Deatils></Deatils>
-      </div>
+    <div className="parent h-screen w-full relative grid grid-cols-2 grid-rows-2">
+      <div className="one col-span-1 row-span-1 bg-stone-800 relative"><HexagonalMap></HexagonalMap></div>
+      <div className="one col-span-1 row-span-1 bg-background relative"><ChartTabs></ChartTabs></div>
+      <div className="one col-span-1 row-span-1 bg-background relative"><Table></Table></div>
+      <div className="one col-span-1 row-span-1 bg-background relative"><Deatils></Deatils></div>
     </div>
-  )
-}
+  );
+};
 
-export default Dashboard
+export default Dashboard;
