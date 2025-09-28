@@ -345,3 +345,26 @@ body {
     @apply bg-background text-foreground;
   }
 }
+
+
+
+
+
+
+::-webkit-scrollbar {
+  height: 8px;
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #1a1a1a; /* dark track */
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #555; /* dark thumb */
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #777;
+}
