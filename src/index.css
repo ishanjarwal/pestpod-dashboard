@@ -3,6 +3,9 @@
 
 @custom-variant dark (&:is(.dark *));
 
+
+
+
 :root {
   --background: oklch(1 0 0);
   --foreground: oklch(0.2686 0 0);
@@ -161,6 +164,12 @@
   --shadow-xl: var(--shadow-xl);
   --shadow-2xl: var(--shadow-2xl);
 }
+
+
+
+
+
+
 
 @layer base {
   * {
