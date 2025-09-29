@@ -1,8 +1,8 @@
-"use client"
+"use client";
 
-import { Piechart } from "./PieChart"
+import { Piechart } from "./PieChart";
 
-const Details = () => {
+const Details = ({ curr }: { curr: any }) => {
   return (
     <div className="w-full h-full rounded-lg grid grid-cols-1 md:grid-cols-3 md:grid-rows-5 gap-4 p-5">
       {/* Image */}
@@ -28,7 +28,9 @@ const Details = () => {
           <h1 className="text-center font-semibold text-lg">Information</h1>
           <ul className="text-sm space-y-1 break-words">
             <li className="flex items-center gap-2">
-              Status: <span className="h-2 w-2 bg-green-400 rounded-full"></span> Completed
+              Status:{" "}
+              <span className="h-2 w-2 bg-green-400 rounded-full"></span>{" "}
+              Completed
             </li>
             <li>Timestamp: 2025-09-26 12:00 PM</li>
             <li>Spray Time: 20 minutes</li>
@@ -40,19 +42,22 @@ const Details = () => {
           <h1 className="text-center font-semibold text-lg">Details</h1>
           <ul className="text-sm space-y-1 break-words">
             <li className="flex items-center gap-2">
-              <span className="h-2 w-2 bg-[var(--chart-1)] rounded-full"></span> Humidity: 20 %
+              <span className="h-2 w-2 bg-[var(--chart-1)] rounded-full"></span>{" "}
+              Humidity: 20 %
             </li>
             <li className="flex items-center gap-2">
-              <span className="h-2 w-2 bg-[var(--chart-2)] rounded-full"></span> Temperature: 20&deg;C
+              <span className="h-2 w-2 bg-[var(--chart-2)] rounded-full"></span>{" "}
+              Temperature: 20&deg;C
             </li>
             <li className="flex items-center gap-2">
-              <span className="h-2 w-2 bg-[var(--chart-3)] rounded-full"></span> Moisture: 20 %
+              <span className="h-2 w-2 bg-[var(--chart-3)] rounded-full"></span>{" "}
+              Moisture: 20 %
             </li>
           </ul>
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Details
+export default Details;

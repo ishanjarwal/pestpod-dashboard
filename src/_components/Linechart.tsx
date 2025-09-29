@@ -1,5 +1,11 @@
-"use client"
-import { Area, AreaChart, CartesianGrid, XAxis, ResponsiveContainer } from "recharts"
+"use client";
+import {
+  Area,
+  AreaChart,
+  CartesianGrid,
+  XAxis,
+  ResponsiveContainer,
+} from "recharts";
 
 import {
   Card,
@@ -7,14 +13,15 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card"
+} from "@/components/ui/card";
 import {
   ChartContainer,
   ChartTooltip,
   ChartTooltipContent,
-} from "@/components/ui/chart"
+} from "@/components/ui/chart";
+import { format } from "date-fns";
 
-export const description = "Hourly Humidity, Temperature, and Soil Moisture"
+export const description = "Hourly Humidity, Temperature, and Soil Moisture";
 
 const chartData = [
   { time: "12:00 AM", humidity: 78, temperature: 22, moisture: 65 },
@@ -40,16 +47,24 @@ const chartData = [
   { time: "8:00 PM", humidity: 72, temperature: 25, moisture: 62 },
   { time: "9:00 PM", humidity: 74, temperature: 24, moisture: 64 },
   { time: "10:00 PM", humidity: 76, temperature: 23, moisture: 65 },
-  { time: "11:00 PM", humidity: 77, temperature: 22, moisture: 66 }
-]
+  { time: "11:00 PM", humidity: 77, temperature: 22, moisture: 66 },
+];
 
 export const chartConfig = {
   humidity: { label: "Humidity (%)", color: "var(--chart-1)" },
   temperature: { label: "Temperature (°C)", color: "var(--chart-2)" },
   moisture: { label: "Soil Moisture (%)", color: "var(--chart-3)" },
-}
+};
 
-export function Linechart() {
+export default function Linechart({ data }: { data: any }) {
+  console.log(data);
+  const chartData = data.map((el: any) => ({
+    time: format(el.createdAt, "h:mm a"),
+    humidity: el.humidity,
+    temperature: el.temperature,
+    moisture: el.moisture,
+  }));
+
   return (
     <Card className="h-full w-full flex flex-col justify-between">
       <CardHeader>
@@ -62,7 +77,10 @@ export function Linechart() {
       <CardContent className="flex-1 p-0 ">
         <ChartContainer config={chartConfig} className="h-40 w-full">
           <ResponsiveContainer width="100%" height="100%">
-            <AreaChart data={chartData} margin={{ left: 32, right: 32, top: 0, bottom: 0 }}>
+            <AreaChart
+              data={chartData}
+              margin={{ left: 32, right: 32, top: 0, bottom: 0 }}
+            >
               <CartesianGrid vertical={false} />
               <XAxis
                 dataKey="time"
@@ -104,5 +122,5 @@ export function Linechart() {
         </ChartContainer>
       </CardContent>
     </Card>
-  )
+  );
 }
